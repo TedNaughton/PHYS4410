@@ -23,7 +23,10 @@ for i in yData:
 
 unc = []
 for i in yData:
-    unc.append(.2)
+    if i == 55.6:
+        unc.append(.1)
+    else:
+        unc.append(.2)
 
 yDataAngle = []
 for i in yData:
@@ -31,7 +34,10 @@ for i in yData:
 
 uncAngle = []
 for i in yData:
-    uncAngle.append((.2)/(2*705.0))
+    if i == 55.6:
+        uncAngle.append(.1/(2*705.0))
+    else:
+        uncAngle.append((i-55.6)/(2*705.0)*np.sqrt((.2/(i-55.6))**2+(4.8/705.0)**2))
 
 def DampedOscDiffEvol(x, y, u):
     """
@@ -85,12 +91,13 @@ print(b)
 print(red_chi_sq)
 
 a2, gamma2, omega2, b2, red_chi_sq2 = DampedOscDiffEvol(xData, yDataAngle, uncAngle)
-chi_sq2 = len(yData)*red_chi_sq2
+chi_sq2 = (len(yData)-4)*red_chi_sq2
 print(a2)
 print(gamma2)
 print(omega2)
 print(b2)
 print(red_chi_sq2)
+print(chi_sq2)
 
 xx = np.linspace(0, 3480, num=3480)
 yFit = EvalFit(xx, a, gamma, omega, b)
@@ -110,8 +117,8 @@ plt.close()
 #plot of fit vs data
 fig = plt.figure()
 plt.errorbar(xData, yDataAngle, yerr=uncAngle, markersize=1.8, elinewidth=1, fmt='ro')
-plt.plot(xx, yFitAngle, 'b', label = '$-.00514e^{-.00109t}\cos{(.0115t)}+.00553$')
-plt.title('Damped Oscillation Fit vs Data')
+plt.plot(xx, yFitAngle, 'b', label = '$-.00525e^{-.00111t}\cos{(.01149t)}+.00553$')
+plt.title('Damped Oscillation Fit vs Angular Deflection Data')
 plt.xlabel('Time (s)')
 plt.ylabel('Angular Deflection (Radians)')
 plt.legend()
@@ -310,7 +317,7 @@ posChi_Sq = chi_sq2
 negChi_Sq = chi_sq2
 bdiff = 0
 while (((posChi_Sq-optChi_Sq) < 1) or ((negChi_Sq-optChi_Sq) < 1)):
-    bdiff += 0.00001
+    bdiff += 0.000001
     a, gamma, omega, posChi_Sq = DampedOscDiffEvolFixedbParam(xData, yDataAngle, uncAngle, b2+bdiff)
     a, gamma, omega, negChi_Sq = DampedOscDiffEvolFixedbParam(xData, yDataAngle, uncAngle, b2-bdiff)
 
